@@ -1,141 +1,125 @@
 /*PUEDES CONSULTAR STOCK EN TODAS LAS PAGES*/
 
-const stockRemeras = [
-    // Remeras
-    {
-      id: "0",
-      descripcion: "Remera de algodón suave, con diseño urbano",
-      precio: 12000
-    },
-    {
-      id: "1",
-      descripcion: "Remera blanca/opaco con diseño de falamas ATSOBER",
-      precio: 12000
-    },
-    {
-      id: "2",
-      descripcion: "Remera con estampado de rayos en la parte superior de los hombros.",
-      precio: 13000
-    },
-    {
-      id: "3",
-      descripcion: "Remera oversize de corte moderno, clasica opaca",
-      precio: 10000
-    },
-    {
-      id: "4",
-      descripcion: "Remera con diseño de mariposa en el medio rosada",
-      precio: 13000
-    },
-    {
-      id: "5",
-      descripcion: "Remera blanca estampada con diseño de flamas en el medio junto a unas estrellas",
-      precio: 17000
+// Definición del stock de productos
+const stockProductos = [
+  { id: "0", descripcion: "Remera negra con diseño urbano", precio: 12000 },
+  { id: "1", descripcion: "Remera blanca con diseño de flamas", precio: 12000 },
+  { id: "2", descripcion: "Remera negra con diseño de rayos", precio: 13000 },
+  { id: "3", descripcion: "Remera Negra Clasica", precio: 10000 },
+  { id: "4", descripcion: "Remera negra con diseño mariposa rosita", precio: 13000 },
+  { id: "5", descripcion: "Remera blanca thythm estampado school", precio: 17000 },
+  { id: "6", descripcion: "Pantalon tipo jagger negro", precio: 30000 },
+  { id: "7", descripcion: "Jagger Verde oscuro con elastico", precio: 28000 },
+  { id: "8", descripcion: "Jean negro, varios bolsillos", precio: 24999 },
+  { id: "9", descripcion: "Jean negro clasico", precio: 26000 },
+  { id: "10", descripcion: "Jagger color beige", precio: 28000 },
+  { id: "11", descripcion: "Jean clasico / Camuflado militar", precio: 24999 },
+  { id: "12", descripcion: "Buzo nike Bi-Color / Negro con beige", precio: 50000 },
+  { id: "13", descripcion: "Buzo nike Clasico Bi-Color", precio: 45000 },
+  { id: "14", descripcion: "Buzo nike Bi-Color / negro con blanco", precio: 50000 },
+];
+
+// Limite por producto.
+const productLimits = {
+  "0": 3, // Límite para Remera negra
+  "1": 5, // Límite para Remera blanca
+  "2": 2, // Límite para Remera negra con rayos
+  "3": 4, // Límite para Remera Negra Clasica
+  "4": 3, // Límite para Remera negra con mariposa
+  "5": 5, // Límite para Remera blanca thythm
+  "6": 4, // Límite para Pantalón tipo jagger
+  "7": 3, // Límite para Jagger Verde
+  "8": 5, // Límite para Jean negro
+  "9": 4, // Límite para Jean negro clásico
+  "10": 2, // Límite para Jagger color beige
+  "11": 5, // Límite para Jean clásico camuflado
+  "12": 3, // Límite para Buzo nike bi-color
+  "13": 4, // Límite para Buzo nike clásico
+  "14": 3  // Límite para Buzo nike bi-color negro
+};
+
+
+let cart = [];
+
+// Función para añadir un producto al carrito
+function addToCart(productId) {
+    const productIndex = cart.findIndex(item => item.product.id === productId);
+    const product = stockProductos.find(p => p.id === productId);
+    const limit = productLimits[productId];
+
+    if (productIndex !== -1) {
+        // Verifica si se puede incrementar la cantidad
+        if (cart[productIndex].quantity < limit) {
+            cart[productIndex].quantity += 1;
+        } else {
+            alert(`No se pueden añadir más de ${limit} unidades de este producto.`);
+        }
+    } else {
+        // Si no está, lo agrega con cantidad 1
+        cart.push({ product, quantity: 1 });
     }
-];
-const stockPantalones = [
-    // Pantalones
-    {
-      id: "6",
-      descripcion: "Pantalon tipo jagger negro, Varios bolsillos",
-      precio: 30000
-    },
-    {
-      id: "7",
-      descripcion: "Jagger Verde oscuro con elastico en la cintura/Varios bolsillos",
-      precio: 28000
-    },
-    {
-      id: "8",
-      descripcion: "Jean negro, varios bolsillos para mejor calidad",
-      precio: 24999
-    },
-    {
-      id: "9",
-      descripcion: "Jean negro clasico sin estampados, costura de calidad",
-      precio: 26000
-    },
-    {
-      id: "10",
-      descripcion: "Jagger color beige, varios bolsillos a los costados",
-      precio: 28000
-    },
-    {
-      id: "11",
-      descripcion: "Jean clasico / Camuflado militar / Buena costura",
-      precio: 24999
-    },
-];
- const stockBuzos = [
-    // Buzos
-    {
-      id: "12",
-      descripcion: "buzo nike Bi-Color / Negro con beige / Bolsillos frontal",
-      precio: 50000
-    },
-    {
-      id: "13",
-      descripcion: "Buzo nike Clasico Bi-Color / azul marino con gris",
-      precio: 45000
-    },
-    {
-      id: "14",
-      descripcion: "Buzo nike Bi-Color / negro con blanco / No trae la cadena",
-      precio: 50000
-    }
-];
+    updateCart();
+}
 
-/*Mi intento de un carrito de compras funcional*/ 
+// Función para actualizar el carrito
+function updateCart() {
+    const cartItems = document.getElementById("cart-items");
+    let total = 0;
 
-const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-// Cargar el carrito al iniciar
-updateCart();
-
-// Añadir al carrito
-document.querySelectorAll('.add-to-cart').forEach(button => {
-    button.addEventListener('click', () => {
-        const item = {
-            id: button.dataset.id,
-            name: button.dataset.name,
-            price: button.dataset.price
-        };
-        cart.push(item);
-        updateCart();
-        
-        alert(`${item.name} ha sido añadido al carrito.`);
+    // Crear el HTML del carrito
+    let cartHTML = "";
+    cart.forEach(item => {
+        const subtotal = item.product.precio * item.quantity;
+        cartHTML += `
+            <div>
+                <span>${item.product.descripcion} - ${item.product.precio}$ x ${item.quantity} = ${subtotal}$</span>
+                <button onclick="changeQuantity('${item.product.id}', 1)">+</button>
+                <button onclick="changeQuantity('${item.product.id}', -1)">-</button>
+            </div>`;
+        total += subtotal;
     });
+
+    // Asignar el HTML al contenedor del carrito
+    cartItems.innerHTML = cartHTML;
+    document.getElementById("total-price").innerText = `Total: ${total}$`;
+}
+
+// Función para cambiar la cantidad de un producto
+function changeQuantity(productId, amount) {
+    const productIndex = cart.findIndex(item => item.product.id === productId);
+    const limit = productLimits[productId];
+
+    if (productIndex !== -1) {
+        const newQuantity = cart[productIndex].quantity + amount;
+
+        if (newQuantity > limit) {
+            alert(`No se pueden tener más de ${limit} unidades de este producto.`);
+        } else if (newQuantity <= 0) {
+            cart.splice(productIndex, 1);
+        } else {
+            cart[productIndex].quantity = newQuantity;
+        }
+        updateCart();
+    }
+}
+
+// Función para mostrar los productos
+function displayProducts() {
+    const buttons = document.querySelectorAll(".add-to-cart");
+    
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            const productId = button.getAttribute("data-id");
+            addToCart(productId);
+        });
+    });
+}
+
+// Agregar `data-id` a cada botón en el HTML
+document.querySelectorAll('.add-to-cart').forEach((button, index) => {
+    button.setAttribute("data-id", index.toString());
 });
 
-function removeFromCart(itemId) {
-    const index = cart.findIndex(item => item.id === itemId);
-    if (index > -1) {
-        cart.splice(index, 1);
-        updateCart();
-    }
-}
+// Llamar a la función para mostrar los productos
+displayProducts();
 
-function updateCart() {
-    const cartItems = document.getElementById('cart-items');
-    cartItems.innerHTML = '';
-    cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - ${item.price} $`;
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'Eliminar';
-        removeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
-        removeButton.addEventListener('click', () => removeFromCart(item.id));
-        li.appendChild(removeButton);
-        cartItems.appendChild(li);
-    });
-    
-    // Guardar el carrito en localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-/*Page CONTACTO*/
-
-//config de el boton de enviar
-let  botonEnviar = document.getElementById("boton-enviar")
-
-botonEnviar.addEventListener("click", ()=>alert("Sus datos han sido enviados satisfactoriamente"))
