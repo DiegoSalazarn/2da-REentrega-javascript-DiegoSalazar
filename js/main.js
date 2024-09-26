@@ -42,7 +42,6 @@ const productLimits = {
 
 let cart = [];
 
-// Función para añadir un producto al carrito
 function addToCart(productId) {
     const productIndex = cart.findIndex(item => item.product.id === productId);
     const product = stockProductos.find(p => p.id === productId);
@@ -72,6 +71,7 @@ function updateCart() {
                 <span>${item.product.descripcion} - ${item.product.precio}$ x ${item.quantity} = ${subtotal}$</span>
                 <button onclick="changeQuantity('${item.product.id}', 1)">+</button>
                 <button onclick="changeQuantity('${item.product.id}', -1)">-</button>
+                <button onclick="removeFromCart('${item.product.id}')">Eliminar</button>
             </div>`;
         total += subtotal;
     });
@@ -80,7 +80,6 @@ function updateCart() {
     document.getElementById("total-price").innerText = `Total: ${total}$`;
 }
 
-// Función para cambiar la cantidad de un producto
 function changeQuantity(productId, amount) {
     const productIndex = cart.findIndex(item => item.product.id === productId);
     const limit = productLimits[productId];
@@ -99,6 +98,14 @@ function changeQuantity(productId, amount) {
     }
 }
 
+function removeFromCart(productId) {
+    const productIndex = cart.findIndex(item => item.product.id === productId);
+    if (productIndex !== -1) {
+        cart.splice(productIndex, 1);
+        updateCart();
+    }
+}
+
 function displayProducts() {
     const buttons = document.querySelectorAll(".add-to-cart");
     
@@ -110,7 +117,6 @@ function displayProducts() {
     });
 }
 
-// Agregar `data-id` a cada botón en el HTML
 document.querySelectorAll('.add-to-cart').forEach((button, index) => {
     button.setAttribute("data-id", index.toString());
 });
