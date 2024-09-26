@@ -20,6 +20,7 @@ const stockProductos = [
 ];
 
 // Limite por producto.
+
 const productLimits = {
   "0": 3, // Límite para Remera negra
   "1": 5, // Límite para Remera blanca
@@ -48,25 +49,21 @@ function addToCart(productId) {
     const limit = productLimits[productId];
 
     if (productIndex !== -1) {
-        // Verifica si se puede incrementar la cantidad
         if (cart[productIndex].quantity < limit) {
             cart[productIndex].quantity += 1;
         } else {
             alert(`No se pueden añadir más de ${limit} unidades de este producto.`);
         }
     } else {
-        // Si no está, lo agrega con cantidad 1
         cart.push({ product, quantity: 1 });
     }
     updateCart();
 }
 
-// Función para actualizar el carrito
 function updateCart() {
     const cartItems = document.getElementById("cart-items");
     let total = 0;
 
-    // Crear el HTML del carrito
     let cartHTML = "";
     cart.forEach(item => {
         const subtotal = item.product.precio * item.quantity;
@@ -79,7 +76,6 @@ function updateCart() {
         total += subtotal;
     });
 
-    // Asignar el HTML al contenedor del carrito
     cartItems.innerHTML = cartHTML;
     document.getElementById("total-price").innerText = `Total: ${total}$`;
 }
@@ -103,7 +99,6 @@ function changeQuantity(productId, amount) {
     }
 }
 
-// Función para mostrar los productos
 function displayProducts() {
     const buttons = document.querySelectorAll(".add-to-cart");
     
@@ -120,6 +115,5 @@ document.querySelectorAll('.add-to-cart').forEach((button, index) => {
     button.setAttribute("data-id", index.toString());
 });
 
-// Llamar a la función para mostrar los productos
 displayProducts();
 
