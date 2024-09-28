@@ -123,3 +123,74 @@ document.querySelectorAll('.add-to-cart').forEach((button, index) => {
 
 displayProducts();
 
+/*BOTON DE FINALIZAR COMPRA*/
+
+// Mostrar modal de datos del usuario
+const modalDatos = document.getElementById("modal-datos");
+const modalResumen = document.getElementById("modal-resumen");
+const btnFinalizarCompra = document.getElementById("finalizar-compra");
+const formDatos = document.getElementById("form-datos");
+const resumenDetalles = document.getElementById("resumen-detalles");
+const spanCloses = document.querySelectorAll(".close");
+
+btnFinalizarCompra.addEventListener('click', function() {
+    if (cart.length === 0) {
+        alert("El carrito está vacío.");
+    } else {
+        modalDatos.style.display = "block";
+    }
+});
+
+// Cerrar modales cuando se hace clic en la "X"
+spanCloses.forEach(span => {
+    span.addEventListener('click', function() {
+        modalDatos.style.display = "none";
+        modalResumen.style.display = "none";
+    });
+});
+
+// Procesar el formulario y mostrar el resumen de compra
+formDatos.addEventListener('submit', function(event) {
+    event.preventDefault(); // Evita que se recargue la página
+
+    // Obtener datos del usuario
+    const nombre = document.getElementById("nombre").value;
+    const email = document.getElementById("email").value;
+    const direccion = document.getElementById("direccion").value;
+
+    // Generar el resumen de compra
+    let resumen = `<strong>Nombre:</strong> ${nombre}<br>`;
+    resumen += `<strong>Correo:</strong> ${email}<br>`;
+    resumen += `<strong>Dirección:</strong> ${direccion}<br><br>`;
+    resumen += "<strong>Productos:</strong><br>";
+
+    let total = 0;
+    cart.forEach(item => {
+        resumen += `- ${item.product.descripcion}: $${item.product.precio} x ${item.quantity}<br>`;
+        total += item.product.precio * item.quantity;
+    });
+
+    resumen += `<br><strong>Total a pagar:</strong> $${total}`;
+
+    // Mostrar el resumen en el modal de resumen
+    resumenDetalles.innerHTML = resumen;
+
+    // Cerrar modal de datos y abrir modal de resumen
+    modalDatos.style.display = "none";
+    modalResumen.style.display = "block";
+});
+
+// Cerrar el modal de resumen al hacer clic en "Cerrar"
+document.getElementById("cerrar-resumen").addEventListener('click', function() {
+    modalResumen.style.display = "none";
+});
+
+// Cerrar modal si se hace clic fuera del contenido
+window.onclick = function(event) {
+    if (event.target == modalDatos) {
+        modalDatos.style.display = "none";
+    }
+    if (event.target == modalResumen) {
+        modalResumen.style.display = "none";
+    }
+};
