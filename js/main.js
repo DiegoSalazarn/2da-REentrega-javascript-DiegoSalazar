@@ -1,141 +1,196 @@
 /*PUEDES CONSULTAR STOCK EN TODAS LAS PAGES*/
 
-const stockRemeras = [
-    // Remeras
-    {
-      id: "0",
-      descripcion: "Remera de algodón suave, con diseño urbano",
-      precio: 12000
-    },
-    {
-      id: "1",
-      descripcion: "Remera blanca/opaco con diseño de falamas ATSOBER",
-      precio: 12000
-    },
-    {
-      id: "2",
-      descripcion: "Remera con estampado de rayos en la parte superior de los hombros.",
-      precio: 13000
-    },
-    {
-      id: "3",
-      descripcion: "Remera oversize de corte moderno, clasica opaca",
-      precio: 10000
-    },
-    {
-      id: "4",
-      descripcion: "Remera con diseño de mariposa en el medio rosada",
-      precio: 13000
-    },
-    {
-      id: "5",
-      descripcion: "Remera blanca estampada con diseño de flamas en el medio junto a unas estrellas",
-      precio: 17000
-    }
-];
-const stockPantalones = [
-    // Pantalones
-    {
-      id: "6",
-      descripcion: "Pantalon tipo jagger negro, Varios bolsillos",
-      precio: 30000
-    },
-    {
-      id: "7",
-      descripcion: "Jagger Verde oscuro con elastico en la cintura/Varios bolsillos",
-      precio: 28000
-    },
-    {
-      id: "8",
-      descripcion: "Jean negro, varios bolsillos para mejor calidad",
-      precio: 24999
-    },
-    {
-      id: "9",
-      descripcion: "Jean negro clasico sin estampados, costura de calidad",
-      precio: 26000
-    },
-    {
-      id: "10",
-      descripcion: "Jagger color beige, varios bolsillos a los costados",
-      precio: 28000
-    },
-    {
-      id: "11",
-      descripcion: "Jean clasico / Camuflado militar / Buena costura",
-      precio: 24999
-    },
-];
- const stockBuzos = [
-    // Buzos
-    {
-      id: "12",
-      descripcion: "buzo nike Bi-Color / Negro con beige / Bolsillos frontal",
-      precio: 50000
-    },
-    {
-      id: "13",
-      descripcion: "Buzo nike Clasico Bi-Color / azul marino con gris",
-      precio: 45000
-    },
-    {
-      id: "14",
-      descripcion: "Buzo nike Bi-Color / negro con blanco / No trae la cadena",
-      precio: 50000
-    }
+// Definición del stock de productos
+const stockProductos = [
+  { id: "0", descripcion: "Remera negra con diseño urbano", precio: 12000 },
+  { id: "1", descripcion: "Remera blanca con diseño de flamas", precio: 12000 },
+  { id: "2", descripcion: "Remera negra con diseño de rayos", precio: 13000 },
+  { id: "3", descripcion: "Remera Negra Clasica", precio: 10000 },
+  { id: "4", descripcion: "Remera negra con diseño mariposa rosita", precio: 13000 },
+  { id: "5", descripcion: "Remera blanca thythm estampado school", precio: 17000 },
+  { id: "6", descripcion: "Pantalon tipo jagger negro", precio: 30000 },
+  { id: "7", descripcion: "Jagger Verde oscuro con elastico", precio: 28000 },
+  { id: "8", descripcion: "Jean negro, varios bolsillos", precio: 24999 },
+  { id: "9", descripcion: "Jean negro clasico", precio: 26000 },
+  { id: "10", descripcion: "Jagger color beige", precio: 28000 },
+  { id: "11", descripcion: "Jean clasico / Camuflado militar", precio: 24999 },
+  { id: "12", descripcion: "Buzo nike Bi-Color / Negro con beige", precio: 50000 },
+  { id: "13", descripcion: "Buzo nike Clasico Bi-Color", precio: 45000 },
+  { id: "14", descripcion: "Buzo nike Bi-Color / negro con blanco", precio: 50000 },
 ];
 
-/*Mi intento de un carrito de compras funcional*/ 
+// Limite por producto.
 
-const cart = JSON.parse(localStorage.getItem('cart')) || [];
+const productLimits = {
+  "0": 3, // Límite para Remera negra
+  "1": 5, // Límite para Remera blanca
+  "2": 2, // Límite para Remera negra con rayos
+  "3": 4, // Límite para Remera Negra Clasica
+  "4": 3, // Límite para Remera negra con mariposa
+  "5": 5, // Límite para Remera blanca thythm
+  "6": 4, // Límite para Pantalón tipo jagger
+  "7": 3, // Límite para Jagger Verde
+  "8": 5, // Límite para Jean negro
+  "9": 4, // Límite para Jean negro clásico
+  "10": 2, // Límite para Jagger color beige
+  "11": 5, // Límite para Jean clásico camuflado
+  "12": 3, // Límite para Buzo nike bi-color
+  "13": 4, // Límite para Buzo nike clásico
+  "14": 3  // Límite para Buzo nike bi-color negro
+};
 
-// Cargar el carrito al iniciar
-updateCart();
 
-// Añadir al carrito
-document.querySelectorAll('.add-to-cart').forEach(button => {
-    button.addEventListener('click', () => {
-        const item = {
-            id: button.dataset.id,
-            name: button.dataset.name,
-            price: button.dataset.price
-        };
-        cart.push(item);
-        updateCart();
-        
-        alert(`${item.name} ha sido añadido al carrito.`);
-    });
-});
+let cart = [];
 
-function removeFromCart(itemId) {
-    const index = cart.findIndex(item => item.id === itemId);
-    if (index > -1) {
-        cart.splice(index, 1);
-        updateCart();
+function addToCart(productId) {
+    const productIndex = cart.findIndex(item => item.product.id === productId);
+    const product = stockProductos.find(p => p.id === productId);
+    const limit = productLimits[productId];
+
+    if (productIndex !== -1) {
+        if (cart[productIndex].quantity < limit) {
+            cart[productIndex].quantity += 1;
+        } else {
+            alert(`No se pueden añadir más de ${limit} unidades de este producto.`);
+        }
+    } else {
+        cart.push({ product, quantity: 1 });
     }
+    updateCart();
 }
 
 function updateCart() {
-    const cartItems = document.getElementById('cart-items');
-    cartItems.innerHTML = '';
+    const cartItems = document.getElementById("cart-items");
+    let total = 0;
+
+    let cartHTML = "";
     cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - ${item.price} $`;
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'Eliminar';
-        removeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
-        removeButton.addEventListener('click', () => removeFromCart(item.id));
-        li.appendChild(removeButton);
-        cartItems.appendChild(li);
+        const subtotal = item.product.precio * item.quantity;
+        cartHTML += `
+            <div>
+                <span>${item.product.descripcion} - ${item.product.precio}$ x ${item.quantity} = ${subtotal}$</span>
+                <button onclick="changeQuantity('${item.product.id}', 1)">+</button>
+                <button onclick="changeQuantity('${item.product.id}', -1)">-</button>
+                <button onclick="removeFromCart('${item.product.id}')">Eliminar</button>
+            </div>`;
+        total += subtotal;
     });
-    
-    // Guardar el carrito en localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
+
+    cartItems.innerHTML = cartHTML;
+    document.getElementById("total-price").innerText = `Total: ${total}$`;
 }
 
-/*Page CONTACTO*/
+function changeQuantity(productId, amount) {
+    const productIndex = cart.findIndex(item => item.product.id === productId);
+    const limit = productLimits[productId];
 
-//config de el boton de enviar
-let  botonEnviar = document.getElementById("boton-enviar")
+    if (productIndex !== -1) {
+        const newQuantity = cart[productIndex].quantity + amount;
 
-botonEnviar.addEventListener("click", ()=>alert("Sus datos han sido enviados satisfactoriamente"))
+        if (newQuantity > limit) {
+            alert(`No se pueden tener más de ${limit} unidades de este producto.`);
+        } else if (newQuantity <= 0) {
+            cart.splice(productIndex, 1);
+        } else {
+            cart[productIndex].quantity = newQuantity;
+        }
+        updateCart();
+    }
+}
+
+function removeFromCart(productId) {
+    const productIndex = cart.findIndex(item => item.product.id === productId);
+    if (productIndex !== -1) {
+        cart.splice(productIndex, 1);
+        updateCart();
+    }
+}
+
+function displayProducts() {
+    const buttons = document.querySelectorAll(".add-to-cart");
+    
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            const productId = button.getAttribute("data-id");
+            addToCart(productId);
+        });
+    });
+}
+
+document.querySelectorAll('.add-to-cart').forEach((button, index) => {
+    button.setAttribute("data-id", index.toString());
+});
+
+displayProducts();
+
+/*BOTON DE FINALIZAR COMPRA*/
+
+// Mostrar modal de datos del usuario
+const modalDatos = document.getElementById("modal-datos");
+const modalResumen = document.getElementById("modal-resumen");
+const btnFinalizarCompra = document.getElementById("finalizar-compra");
+const formDatos = document.getElementById("form-datos");
+const resumenDetalles = document.getElementById("resumen-detalles");
+const spanCloses = document.querySelectorAll(".close");
+
+btnFinalizarCompra.addEventListener('click', function() {
+    if (cart.length === 0) {
+        alert("El carrito está vacío.");
+    } else {
+        modalDatos.style.display = "block";
+    }
+});
+
+// Cerrar modales cuando se hace clic en la "X"
+spanCloses.forEach(span => {
+    span.addEventListener('click', function() {
+        modalDatos.style.display = "none";
+        modalResumen.style.display = "none";
+    });
+});
+
+// Procesar el formulario y mostrar el resumen de compra
+formDatos.addEventListener('submit', function(event) {
+    event.preventDefault(); // Evita que se recargue la página
+
+    // Obtener datos del usuario
+    const nombre = document.getElementById("nombre").value;
+    const email = document.getElementById("email").value;
+    const direccion = document.getElementById("direccion").value;
+
+    // Generar el resumen de compra
+    let resumen = `<strong>Nombre:</strong> ${nombre}<br>`;
+    resumen += `<strong>Correo:</strong> ${email}<br>`;
+    resumen += `<strong>Dirección:</strong> ${direccion}<br><br>`;
+    resumen += "<strong>Productos:</strong><br>";
+
+    let total = 0;
+    cart.forEach(item => {
+        resumen += `- ${item.product.descripcion}: $${item.product.precio} x ${item.quantity}<br>`;
+        total += item.product.precio * item.quantity;
+    });
+
+    resumen += `<br><strong>Total a pagar:</strong> $${total}`;
+
+    // Mostrar el resumen en el modal de resumen
+    resumenDetalles.innerHTML = resumen;
+
+    // Cerrar modal de datos y abrir modal de resumen
+    modalDatos.style.display = "none";
+    modalResumen.style.display = "block";
+});
+
+// Cerrar el modal de resumen al hacer clic en "Cerrar"
+document.getElementById("cerrar-resumen").addEventListener('click', function() {
+    modalResumen.style.display = "none";
+});
+
+// Cerrar modal si se hace clic fuera del contenido
+window.onclick = function(event) {
+    if (event.target == modalDatos) {
+        modalDatos.style.display = "none";
+    }
+    if (event.target == modalResumen) {
+        modalResumen.style.display = "none";
+    }
+};
