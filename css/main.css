@@ -137,6 +137,15 @@ body {
   margin-top: 0px;
 }
 
+.title-article h2 {
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  color: #fbfbf4;
+  margin-bottom: 20px;
+  margin-top: 0px;
+}
+
 /*PAGE- Contacto*/
 .primary-titleForm h1 {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;

@@ -1,23 +1,24 @@
-/*PUEDES CONSULTAR STOCK EN TODAS LAS PAGES*/
+// Constante de almacenamiento en LocalStorage
+const STORAGE_KEY = "productosCarrito";
 
 // Definición del stock de productos
 const stockProductos = [
-  { id: "0", descripcion: "Remera negra con diseño urbano", precio: 12000 },
-  { id: "1", descripcion: "Remera blanca con diseño de flamas", precio: 12000 },
-  { id: "2", descripcion: "Remera negra con diseño de rayos", precio: 13000 },
-  { id: "3", descripcion: "Remera Negra Clasica", precio: 10000 },
-  { id: "4", descripcion: "Remera negra con diseño mariposa rosita", precio: 13000 },
-  { id: "5", descripcion: "Remera blanca thythm estampado school", precio: 17000 },
-  { id: "6", descripcion: "Pantalon tipo jagger negro", precio: 30000 },
-  { id: "7", descripcion: "Jagger Verde oscuro con elastico", precio: 28000 },
-  { id: "8", descripcion: "Jean negro, varios bolsillos", precio: 24999 },
-  { id: "9", descripcion: "Jean negro clasico", precio: 26000 },
-  { id: "10", descripcion: "Jagger color beige", precio: 28000 },
-  { id: "11", descripcion: "Jean clasico / Camuflado militar", precio: 24999 },
-  { id: "12", descripcion: "Buzo nike Bi-Color / Negro con beige", precio: 50000 },
-  { id: "13", descripcion: "Buzo nike Clasico Bi-Color", precio: 45000 },
-  { id: "14", descripcion: "Buzo nike Bi-Color / negro con blanco", precio: 50000 },
-];
+    { id: "0", descripcion: "Remera negra con diseño urbano", precio: 12000, categoria: "remeras", img: "../assets/remera-oversize.jpg" },
+    { id: "1", descripcion: "Remera blanca con diseño de flamas", precio: 12000, categoria: "remeras", img: "../assets/remera-oversize-blanca.jpg" },
+    { id: "2", descripcion: "Remera negra con diseño de rayos", precio: 13000, categoria: "remeras", img: "../assets/remera-oversize-rayos.jpg" },
+    { id: "3", descripcion: "Remera Negra Clasica", precio: 10000, categoria: "remeras", img: "../assets/remera-clasica-negra.jpg" },
+    { id: "4", descripcion: "Remera negra con diseño mariposa rosita", precio: 13000, categoria: "remeras", img: "../assets/remera-negra-estampada-mariposa.jpg" },
+    { id: "5", descripcion: "Remera blanca thythm estampado school", precio: 17000, categoria: "remeras", img: "../assets/remera-blanca-trythm.jpg" },
+    { id: "6", descripcion: "Pantalon tipo jagger negro", precio: 30000, categoria: "pantalones", img: "../assets/pantalon1.jpg" },
+    { id: "7", descripcion: "Jagger Verde oscuro con elastico", precio: 28000, categoria: "pantalones", img: "../assets/pantalon2.jpg" },
+    { id: "8", descripcion: "Jean negro, varios bolsillos", precio: 24999, categoria: "pantalones", img: "../assets/pantalon3.jpg" },
+    { id: "9", descripcion: "Jean negro clasico", precio: 26000, categoria: "pantalones", img: "../assets/pantalon4.jpg" },
+    { id: "10", descripcion: "Jagger color beige", precio: 28000, categoria: "pantalones", img: "../assets/pantalon5.jpg" },
+    { id: "11", descripcion: "Jean clasico / Camuflado militar", precio: 24999, categoria: "pantalones", img: "../assets/pantalon6.jpg" },
+    { id: "12", descripcion: "Buzo nike Bi-Color / Negro con beige", precio: 50000, categoria: "buzos", img: "../assets/buzo-nike.jpg" },
+    { id: "13", descripcion: "Buzo nike Clasico Bi-Color", precio: 45000, categoria: "buzos", img: "../assets/buzo-nike2.jpg" },
+    { id: "14", descripcion: "Buzo nike Bi-Color / negro con blanco", precio: 50000, categoria: "buzos", img: "../assets/buzo-nike3.jpg" }
+  ];
 
 // Limite por producto.
 
@@ -194,3 +195,56 @@ window.onclick = function(event) {
         modalResumen.style.display = "none";
     }
 };
+
+// Función para renderizar las cards de productos separadas por categorías
+function renderProductCards() {
+    const container = document.getElementById('products-container');
+    let cardsHTML = '';
+
+    // Categorías separadas
+    const categorias = ['remeras', 'pantalones', 'buzos'];
+
+    categorias.forEach(categoria => {
+        // Agregar un título para cada categoría
+        cardsHTML += `<div class="title-article color-title-black">
+                        <h2>${categoria.charAt(0).toUpperCase() + categoria.slice(1)}</h2>
+                      </div>`;
+        cardsHTML += '<div class="row">'; // Abrir un row para cada categoría
+
+        stockProductos
+          .filter(product => product.categoria === categoria)
+          .forEach(product => {
+            cardsHTML += `
+            <div class="col-md-4 mb-4">
+                <div class="card-articulos">
+                    <div class="card">
+                        <img src="${product.img}" title="${product.descripcion}" class="card-img-top" alt="${product.descripcion}">
+                        <div class="card-body">
+                            <p class="card-title Dfz-xl">${product.precio.toLocaleString()}$</p>
+                            <p class="card-text">${product.descripcion}</p>
+                            <button class="btn btn-primary add-to-cart" data-id="${product.id}">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+          });
+
+        cardsHTML += '</div>';
+    });
+
+    // Inyectar el HTML generado en el contenedor
+    container.innerHTML = cardsHTML;
+    assignAddToCartEvents();
+}
+
+function assignAddToCartEvents() {
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', () => {
+            const productId = button.getAttribute('data-id');
+            addToCart(productId);
+        });
+    });
+}
+
+renderProductCards();
+
